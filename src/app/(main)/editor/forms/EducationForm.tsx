@@ -32,8 +32,7 @@ export default function EducationForm({
       if (!isValid) return;
       setResumeData({
         ...resumeData,
-        workExperiences:
-          values.educations?.filter((edu) => edu !== undefined) || [],
+        educations: values.educations?.filter((edu) => edu !== undefined) || [],
       });
     });
     return unsubscribe;
@@ -101,7 +100,7 @@ function EducationItem({ form, index, remove }: EducationItemProps) {
         name={`educations.${index}.degree`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Job title</FormLabel>
+            <FormLabel>Degree</FormLabel>
             <FormControl>
               <Input {...field} autoFocus />
             </FormControl>
