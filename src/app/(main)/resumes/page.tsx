@@ -1,12 +1,11 @@
-import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import { resumeDataInclude } from "@/lib/types";
 import { auth } from "@clerk/nextjs/server";
-import { PlusSquareIcon } from "lucide-react";
 import { Metadata } from "next";
-import Link from "next/link";
+import CreateResumeButton from "../editor/_components/CreateResumeButton";
 import ResumeItem from "../editor/_components/ResumeItem";
-import { resumeSchema } from "@/lib/validation";
+import { getUserSubscriptionLevel } from "@/lib/subscriptions";
+import { canCreateResume } from "@/lib/permissions";
 
 export const metadata: Metadata = {
   title: "Your resumes",
@@ -19,7 +18,7 @@ export default async function page() {
     return null;
   }
 
-  const [resumes, totalCount] = await Promise.all([
+  const [resumes, totalCount, subscriptionLevel] = await Promise.all([
     prisma.resume.findMany({
       where: {
         userId,
@@ -35,18 +34,17 @@ export default async function page() {
         userId,
       },
     }),
+
+    getUserSubscriptionLevel(userId),
   ]);
 
   //TODO:CHECK QUOTA FOR NON PREMIUM USERS
 
   return (
     <main className="max-w-7xl mx-auto w-full px-3 py-6 space-y-6">
-      <Button asChild className="mx-auto flex w-fit gap-2">
-        <Link href={"/editor"}>
-          <PlusSquareIcon className="size-5" />
-          New Resume
-        </Link>
-      </Button>
+      <CreateResumeButton
+        canCreate={canCreateResume(subscriptionLevel, totalCount)}
+      />
       <div className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight">Your resumes</h1>
         <p>Total: {totalCount}</p>

@@ -273,5 +273,3 @@ function WorkExperienceItem({
     </div>
   );
 }
-
-//3:00
